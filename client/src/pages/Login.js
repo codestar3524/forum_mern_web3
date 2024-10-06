@@ -49,20 +49,17 @@ const Login = () => {
   }, [isLoggedIn, navigate]);
 
   return (
-    <Row className="auth-form justify-content-center">
+    <Row className="auth-form justify-content-end">
       <div className="bg-wrapper">
-        <div className="bg">
-          <Image src="https://res.cloudinary.com/djuxwysbl/image/upload/v1674230232/bg_ywi34h.svg" />
-        </div>
       </div>
-      <Col className="d-flex align-items-center justify-content-center" lg={6}>
+      <Col className="d-flex align-items-center justify-content-end" lg={6}>
         <Card>
           <Card.Body>
             <Form onSubmit={handleSubmit}>
               {isLoading && <div className="loader"></div>}
               <h3 className="text-center">Login</h3>
               <p className="text-center">
-                Welcome to ONetwork, a platform to connect with the world.
+                Welcome to Forum
               </p>
               {message && (
                 <div

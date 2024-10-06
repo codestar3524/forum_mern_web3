@@ -5,19 +5,19 @@ const SkeletonFollowTab = () => {
   return (
     <Col lg={12}>
       <div className="follow-brief d-flex align-items-center">
-        <Skeleton circle width={80} height={80} />
+        <Skeleton highlightColor="#e6f7ff" baseColor="#21114d"   circle width={80} height={80} />
         <div className="user-meta d-flex flex-column">
           <h5 className="user-name">
-            <Skeleton width={200} />
+            <Skeleton highlightColor="#e6f7ff" baseColor="#21114d"   width={200} />
           </h5>
           <span className="username">
-            <Skeleton width={150} />
+            <Skeleton highlightColor="#e6f7ff" baseColor="#21114d"   width={150} />
           </span>
           <span className="user-bio">
-            <Skeleton width={250} />
+            <Skeleton highlightColor="#e6f7ff" baseColor="#21114d"   width={250} />
           </span>
         </div>
-        <Skeleton width={120} height={40} />
+        <Skeleton highlightColor="#e6f7ff" baseColor="#21114d"   width={120} height={40} />
       </div>
     </Col>
   );

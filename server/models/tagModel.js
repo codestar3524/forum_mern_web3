@@ -11,7 +11,7 @@ const TagSchema = new mongoose.Schema(
 TagSchema.virtual("author", {
   ref: "User",
   localField: "createdBy",
-  foreignField: "username",
+  foreignField: "email",
   justOne: true,
 });
 

@@ -18,7 +18,8 @@ const TopicsTab = () => {
     dispatch(getAllTopics("latest", ""));
   }, [dispatch]);
 
-  topics = topics.filter((t) => t.author.username === username);
+  topics = topics.filter((t) => t?.author?.username === username);
+
 
   return useMemo(() => {
     return (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import Select from "react-select";
-import CreatableSelect from "react-select/creatable";
+// import Select from "react-select";
+// import CreatableSelect from "react-select/creatable";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { addTopic, resetNewTopic, getSpaces } from "../redux/slices/topicSlice";
@@ -100,7 +100,7 @@ const NewTopic = () => {
                   />
                   <Form.Label>Topic Content</Form.Label>
                 </Form.Group>
-                <Form.Group className="form-group select2-container mb-3">
+                {/* <Form.Group className="form-group select2-container mb-3">
                   <Select
                     classNamePrefix="form-control"
                     placeholder="Choose Topic's Space..."
@@ -111,8 +111,8 @@ const NewTopic = () => {
                     onChange={(e) => setSelectedSpace(e.value)}
                   />
                   <Form.Label className="control-label">Topic Space</Form.Label>
-                </Form.Group>
-                <Form.Group className="form-group select2-container mb-3">
+                </Form.Group> */}
+                {/* <Form.Group className="form-group select2-container mb-3">
                   <CreatableSelect
                     components={{
                       Menu: () => null,
@@ -126,7 +126,7 @@ const NewTopic = () => {
                     onChange={(e) => setSelectedTags(e)}
                   />
                   <Form.Label className="control-label">Topic Tags</Form.Label>
-                </Form.Group>
+                </Form.Group> */}
                 <Button
                   disabled={isLoading}
                   className="mb-4 w-100"

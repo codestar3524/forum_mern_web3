@@ -30,28 +30,7 @@ const UserSchema = new mongoose.Schema({
     },
     url: {
       type: String,
-      default: "https://i.imgur.com/CAFy1oY.jpg",
-    },
-  },
-  socialNetwork: {
-    facebook: {
-      type: String,
-      trim: true,
-      match:
-        /(?:https?:\/\/)?(?:www\.|m\.|mobile\.|touch\.|mbasic\.)?(?:facebook\.com|fb(?:\.me|\.com))\/(?!$)(?:(?:\w)*#!\/)?(?:pages\/|pg\/)?(?:photo\.php\?fbid=)?(?:[\w\-]*\/)*?(?:\/)?(?:profile\.php\?id=)?([^\/?&\s]*)(?:\/|&|\?)?.*/gm,
-      default: "",
-    },
-    twitter: {
-      type: String,
-      trim: true,
-      match: /^(?:https?:\/\/)?(?:www\.)?twitter\.com\/(#!\/)?[a-zA-Z0-9_]+$/i,
-      default: "",
-    },
-    github: {
-      type: String,
-      trim: true,
-      match: /^(?:https?:\/\/)?(?:www\.)?github\.com\/(#!\/)?[a-zA-Z0-9_]+$/i,
-      default: "",
+      default: "wallpaper.jpg",
     },
   },
   bio: {
@@ -76,8 +55,14 @@ const UserSchema = new mongoose.Schema({
       default: [],
     },
   ],
+  // New fields for approval and rejection status
+  approved: {
+    type: Boolean,
+    default: false,
+  }
 });
 
+// Virtuals for user following and followers
 UserSchema.virtual("user_following", {
   ref: "User",
   localField: "following",
@@ -90,9 +75,11 @@ UserSchema.virtual("user_followers", {
   foreignField: "username",
 });
 
+// Enable virtuals for JSON and object output
 UserSchema.set("toObject", { virtuals: true });
 UserSchema.set("toJSON", { virtuals: true });
 
+// Auto increment the userID field
 UserSchema.plugin(AutoIncrement, { inc_field: "userID" });
 
 module.exports = mongoose.model("User", UserSchema);

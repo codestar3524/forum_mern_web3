@@ -14,7 +14,6 @@ const generatePasswordResetToken = require("../middlewares/generatePasswordReset
 module.exports = {
   register: async (req, res) => {
     const { username, email, password, firstName, lastName } = req.body;
-    console.log(req.body);
     
     if (!username || !email || !password || !firstName || !lastName) {
       return res.status(422).json({
@@ -45,18 +44,18 @@ module.exports = {
         password: hashedPassword,
       });
       
-      const token = generateEmailVerifyToken(email);
+      // const token = generateEmailVerifyToken(email);
 
-      let options = {
-        email: email,
-        subject: "Verify your email address",
-        html: verifyEmailTemplate(user, token),
-      };
+      // let options = {
+      //   email: email,
+      //   subject: "Verify your email address",
+      //   html: verifyEmailTemplate(user, token),
+      // };
 
-      await sendEmail(options);
+      // await sendEmail(options);
 
       return res.status(201).json({
-        message: `Email has been sent to ${email}. Follow the instructions to activate your account.`,
+        message: `Your account created successfully. You can use after administrator approve`,
       });
     } catch (err) {
       return res.status(400).json({
@@ -89,7 +88,7 @@ module.exports = {
       }
       if (!userExisted.isVerified) {
         return res.status(400).json({
-          message: "You must activate your account before you can login!",
+          message: "Your account deactivate. Please reach out to administrator.",
         });
       }
       const accessToken = generateAccessToken(userExisted);

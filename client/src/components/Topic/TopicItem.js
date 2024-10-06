@@ -2,7 +2,7 @@ import { Button, Nav, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { GiPlayButton } from "react-icons/gi";
 import { SiGooglemessages } from "react-icons/si";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaCalendar, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
   toggleUpvoteTopic,
@@ -27,42 +27,19 @@ const TopicItem = ({ topic }) => {
   };
 
   return (
-    <article className="topic-item">
-      <div className="topic-vote d-flex flex-column align-items-center">
-        <Button
-          disabled={votingIsLoading}
-          onClick={() => {
-            if (!isAuth) navigate("/login");
-            if (isAuth) handleToggleUpvoteTopic(topic._id);
-          }}
-          className={
-            username && topic?.upvotes?.includes(username) ? "upvoted" : ""
-          }
+    <article className="topic-item d-flex align-items-center">
+
+      <div className="topic-writer d-flex align-items-center">
+        <Link
+          className="d-flex align-items-center justify-content-center flex-column"
+          to={`/user/${topic?.author?.username}`}
         >
-          <GiPlayButton />
-        </Button>
-        <span
-          className={`votes ${
-            username && topic?.upvotes?.includes(username) ? "upvoted" : ""
-          }${
-            username && topic?.downvotes?.includes(username) ? "downvoted" : ""
-          }`}
-        >
-          {topic?.upvotes?.length - topic?.downvotes?.length}
-        </span>
-        <Button
-          disabled={votingIsLoading}
-          onClick={() => {
-            if (!isAuth) navigate("/login");
-            if (isAuth) handleToggleDownvoteTopic(topic._id);
-          }}
-          className={
-            username && topic?.downvotes?.includes(username) ? "downvoted" : ""
-          }
-        >
-          <GiPlayButton />
-        </Button>
+          <Image src={topic?.author?.avatar?.url} />
+          <h6 className="writer">{`${topic?.author?.firstName} ${topic?.author?.lastName}`}</h6>
+        </Link>
+
       </div>
+
       <div className="topic-item-content">
         <Nav as="ul" className="tags">
           {topic?.tags?.length > 0 &&
@@ -79,24 +56,62 @@ const TopicItem = ({ topic }) => {
         </Link>
         <p className="topic-summary">{topic?.content}</p>
         <div className="topic-meta d-flex align-items-center">
-          <div className="topic-writer d-flex align-items-center">
-            <Link
-              className="d-flex align-items-center justify-content-center"
-              to={`/user/${topic?.author?.username}`}
-            >
-              <Image src={topic?.author?.avatar?.url} />
-              <h5 className="writer">{`${topic?.author?.firstName} ${topic?.author?.lastName}`}</h5>
-            </Link>
-            <p className="topic-date">
-              Posted{" "}
-              {moment
-                .utc(topic?.createdAt)
-                .local()
-                .startOf("seconds")
-                .fromNow()}
-            </p>
-          </div>
+
+          <p className="topic-date d-flex align-items-center">
+            <div className="icon-container d-flex align-items-center justify-content-start">
+              <FaCalendar />
+            </div>
+            Posted{" "}
+            {moment
+              .utc(topic?.createdAt)
+              .local()
+              .startOf("seconds")
+              .fromNow()}
+          </p>
           <div className="topic-stats d-flex">
+            <span className="topic-vote d-flex align-items-center">
+              <Button
+                disabled={votingIsLoading}
+                onClick={() => {
+                  if (!isAuth) navigate("/login");
+                  if (isAuth) handleToggleUpvoteTopic(topic._id);
+                }}
+                className={
+                  username && topic?.upvotes?.includes(username) ? "upvoted" : ""
+                }
+              >
+                <div className="d-flex icon-container">
+                  <FaThumbsUp />
+                </div>
+
+              </Button>
+              <span
+                className={`votes ${username && topic?.upvotes?.includes(username) ? "upvoted" : ""
+                  }`}
+              >
+                {topic?.upvotes?.length}
+              </span>
+              <Button
+                disabled={votingIsLoading}
+                onClick={() => {
+                  if (!isAuth) navigate("/login");
+                  if (isAuth) handleToggleDownvoteTopic(topic._id);
+                }}
+                className={
+                  username && topic?.downvotes?.includes(username) ? "downvoted" : ""
+                }
+              >
+                <div className="d-flex icon-container">
+                  <FaThumbsDown />
+                </div>
+              </Button>
+              <span
+                className={`${username && topic?.downvotes?.includes(username) ? "downvoted" : ""
+                  }`}
+              >
+                {topic?.downvotes?.length}
+              </span>
+            </span>
             <span className="answers d-flex align-items-center">
               <div className="icon-container d-flex">
                 <SiGooglemessages />

@@ -38,5 +38,5 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/user", userRoutes);
 
 app.listen(PORT, () => {
-  console.log("Server is running!");
+  console.log(`Server is running at ${PORT}!`);
 });

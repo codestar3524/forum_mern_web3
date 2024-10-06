@@ -6,14 +6,19 @@ const Space = require("../models/spaceModel");
 module.exports = {
   getAllTopics: async (req, res) => {
     try {
-      const { search, sort } = req.query;
+      const { search, sort, page = 1, limit = 10, searchUser } = req.query; // Add page and limit query parameters
       let sortOptions = {};
       let searchQuery = {};
-
-      if (search && search.length > 0) {
-        searchQuery = { title: new RegExp(search, "i") };
+      
+      if (searchUser) {
+        searchQuery.owner = searchUser;
       }
 
+      if (search && search.length > 0) {
+        searchQuery.title = new RegExp(search, "i"); // Add search query to filter by title
+      }
+     
+      // Sorting options logic
       if (sort === "latest") {
         sortOptions = { createdAt: -1 };
       }
@@ -26,15 +31,29 @@ module.exports = {
       if (sort === "most_upvoted") {
         sortOptions = { upvotes: -1 };
       }
+
+      // Pagination logic
+      const skip = (page - 1) * limit;
+      const totalTopics = await Topic.countDocuments(searchQuery); // Get the total count of topics for pagination
       let topics = await Topic.find(searchQuery)
         .sort(sortOptions)
+        .skip(skip) // Skip topics for the previous pages
+        .limit(parseInt(limit)) // Limit the number of topics returned
         .populate("tags")
         .populate({ path: "author", select: { password: 0, __v: 0 } })
         .lean()
         .exec();
-      return res.json(topics);
+
+      
+      return res.json({
+        topics, // The topics for the current page
+        totalTopics, // Total number of topics for pagination
+        currentPage: parseInt(page), // Current page number
+        totalPages: Math.ceil(totalTopics / limit), // Total pages based on the limit
+      });
     } catch (err) {
       console.log(err.message);
+      return res.status(500).json({ message: "An error occurred." });
     }
   },
   getTopic: async (req, res) => {
@@ -56,58 +75,58 @@ module.exports = {
       console.log(err.message);
     }
   },
-addTopic: async (req, res) => {
-  try {
-    const { title, content, selectedSpace, selectedTags } = req.body;
+  addTopic: async (req, res) => {
+    try {
+      const { title, content, selectedSpace, selectedTags } = req.body;
 
-    let createdTags = [];
+      let createdTags = [];
 
-    for (let index = 0; index < selectedTags.length; index++) {
-      let name = selectedTags[index].value;
-      let tagFound = await Tag.findOne({ name });
-      if (!tagFound) {
-        let tag = await Tag.create({
-          name: name,
-          createdBy: req.user.username,
-        });
-        createdTags.push(tag._id);
-      } else {
-        createdTags.push(tagFound._id);
+      for (let index = 0; index < selectedTags.length; index++) {
+        let name = selectedTags[index].value;
+        let tagFound = await Tag.findOne({ name });
+        if (!tagFound) {
+          let tag = await Tag.create({
+            name: name,
+            createdBy: req.user.username,
+          });
+          createdTags.push(tag._id);
+        } else {
+          createdTags.push(tagFound._id);
+        }
       }
+
+      const slug = title
+        .toString()
+        .normalize("NFKD")
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\-]+/g, "")
+        .replace(/\_/g, "-")
+        .replace(/\-\-+/g, "-")
+        .replace(/\-$/g, "");
+
+      let topic = await Topic.create({
+        owner: req.user.username,
+        title: title.trim(),
+        content: content.trim(),
+        slug: slug.trim(),
+        tags: createdTags,
+      });
+      topic = await topic.populate({
+        path: "author",
+        select: { password: 0, __v: 0 },
+      });
+      return res.status(201).json({
+        topic: topic,
+        message: "Topic successfully created!",
+      });
+    } catch (err) {
+      return res.status(400).json({
+        message: err.message || "An error occurred while creating the topic.",
+      });
     }
-
-    const slug = title
-      .toString()
-      .normalize("NFKD")
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, "-")
-      .replace(/[^\w\-]+/g, "")
-      .replace(/\_/g, "-")
-      .replace(/\-\-+/g, "-")
-      .replace(/\-$/g, "");
-
-    let topic = await Topic.create({
-      owner: req.user.username,
-      title: title.trim(),
-      content: content.trim(),
-      slug: slug.trim(),
-      tags: createdTags,
-    });
-    topic = await topic.populate({
-      path: "author",
-      select: { password: 0, __v: 0 },
-    });
-    return res.status(201).json({
-      topic: topic,
-      message: "Topic successfully created!",
-    });
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message || "An error occurred while creating the topic.",
-    });
-  }
-},
+  },
 
   deleteTopic: async (req, res) => {
     try {

@@ -5,7 +5,7 @@ import Error404 from "../assets/lotties/error-404-not-found.json";
 const NotFound = () => {
   document.title = "Page Not Found | ONetwork Forum";
   return (
-    <Row className="auth-form justify-content-center">
+    <Row className="auth-form justify-content-end">
       <div className="bg-wrapper">
         <div
           style={{

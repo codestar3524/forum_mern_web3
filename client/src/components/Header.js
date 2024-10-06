@@ -19,6 +19,7 @@ import { useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchQuery } from "../redux/slices/topicSlice";
 import { refresh_token, logout } from "../redux/slices/authSlice";
+import Logo from "../assets/images/vector-education-logo.png";
 import Skeleton from "react-loading-skeleton";
 
 const Header = () => {
@@ -48,12 +49,17 @@ const Header = () => {
     <header>
       <Navbar expand="lg">
         <Container>
-          <Link to="/" onClick={() => dispatch(setSearchQuery(""))}>
-            <Navbar.Brand>Forum Logo</Navbar.Brand>
+          <Link className="logo" style={{display:"flex", alignItems:"center"}} to="/" onClick={() => dispatch(setSearchQuery(""))}>
+            <Image src={Logo} width={60} height={60} />
+            <Navbar.Brand className="logo-title">
+              <h4>
+                中国学生区块链社区
+              </h4>
+            </Navbar.Brand>
           </Link>
           <Navbar.Toggle aria-controls="navbarsupportedcontent" />
           <Navbar.Collapse id="navbarsupportedcontent">
-            <Col lg={6} md={8} sm={10}>
+            <Col lg={4} md={6} sm={12}>
               <Form
                 className="search-form"
                 onSubmit={(e) => {
@@ -78,7 +84,7 @@ const Header = () => {
               {isAuth && isHeaderLoading && (
                 <>
                   <span>
-                    <Skeleton
+                    <Skeleton baseColor="#2e236b"
                       style={{ marginRight: `8px` }}
                       circle
                       width={45}
@@ -86,7 +92,7 @@ const Header = () => {
                     />
                   </span>
                   <span>
-                    <Skeleton width={100} height={20} />
+                    <Skeleton baseColor="#2e236b" width={100} height={20} />
                   </span>
                 </>
               )}
@@ -109,6 +115,14 @@ const Header = () => {
                     >
                       <BiUser />
                       Profile
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      as={Link}
+                      to={`/admin-panel`}
+                      className="d-flex align-items-center"
+                    >
+                      <BiUser />
+                      Admin Panel
                     </Dropdown.Item>
                     <Dropdown.Item
                       onClick={() => {

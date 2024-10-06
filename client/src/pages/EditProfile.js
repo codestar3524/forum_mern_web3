@@ -13,7 +13,9 @@ import SkeletonEditProfile from "../components/Skeletons/SkeletonEditProfile";
 
 const EditProfile = () => {
   const { username } = useParams();
-  const loggedUser = JSON.parse(localStorage.getItem("user"))?.username;
+  // Safely parse the user from localStorage
+  const loggedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user"))?.username : null;
+
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { profileIsLoading } = useSelector((state) => state.profile);
@@ -22,12 +24,15 @@ const EditProfile = () => {
   );
 
   useEffect(() => {
-    if (username)
+    if (username) {
       document.title = `${username} - Edit Profile | ONetwork Forum`;
+    }
   }, [username]);
 
   useEffect(() => {
-    dispatch(getUserProfile(username));
+    if (username) {
+      dispatch(getUserProfile(username));
+    }
   }, [dispatch, username]);
 
   useEffect(() => {
@@ -41,9 +46,9 @@ const EditProfile = () => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
-  const [facebook, setFacebook] = useState();
-  const [twitter, setTwitter] = useState();
-  const [github, setGithub] = useState();
+  const [facebook, setFacebook] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [github, setGithub] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -59,6 +64,7 @@ const EditProfile = () => {
       setCover(event.target.files[0]);
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let formData = new FormData();
@@ -73,7 +79,8 @@ const EditProfile = () => {
     formData.append("confirmNewPassword", confirmNewPassword);
     formData.append("avatar", avatar);
     formData.append("cover", cover);
-    var obj = {};
+    
+    const obj = {};
     for (let key of formData.keys()) {
       obj[key] = formData.get(key);
     }
@@ -82,9 +89,12 @@ const EditProfile = () => {
 
   // eslint-disable-next-line
   return useMemo(() => {
+    // Redirect if the logged user is not the same as the user being edited
     if (loggedUser && loggedUser !== username)
       return <Navigate to={`/user/${loggedUser}/edit`} />;
+      
     if (profileIsLoading) return <SkeletonEditProfile />;
+
     if (!profileIsLoading && user && Object.entries(user).length > 0) {
       return (
         <main>

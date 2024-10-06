@@ -49,8 +49,8 @@ const ProfileHeader = memo(() => {
             style={{
               backgroundImage: `linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0.2),
-      rgba(0, 0, 0, 0.5)
+      rgba(123,98,129, 0.2),
+      rgba(31,68,151, 0.5)
     ),
     url(${userProfile?.cover?.url})`,
             }}

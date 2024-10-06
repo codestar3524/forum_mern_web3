@@ -2,7 +2,7 @@ import { Nav, Button, Image } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { BsFillTagFill } from "react-icons/bs";
 import { GiPlayButton } from "react-icons/gi";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import moment from "moment";
 import {
@@ -31,41 +31,7 @@ const TopicContent = ({ topic, onDeleting }) => {
 
   return (
     <>
-      <div className="topic-vote d-flex flex-column align-items-center">
-        <Button
-          disabled={votingIsLoading}
-          onClick={() => {
-            if (!isAuth) navigate("/login");
-            if (isAuth) handleToggleUpvoteTopic(topic?._id);
-          }}
-          className={
-            username && topic?.upvotes.includes(username) ? "upvoted" : ""
-          }
-        >
-          <GiPlayButton />
-        </Button>
-        <span
-          className={`votes ${
-            username && topic?.upvotes?.includes(username) ? "upvoted" : ""
-          }${
-            username && topic?.downvotes?.includes(username) ? "downvoted" : ""
-          }`}
-        >
-          {topic?.upvotes?.length - topic?.downvotes?.length}
-        </span>
-        <Button
-          disabled={votingIsLoading}
-          onClick={() => {
-            if (!isAuth) navigate("/login");
-            if (isAuth) handleToggleDownvoteTopic(topic?._id);
-          }}
-          className={
-            username && topic?.downvotes?.includes(username) ? "downvoted" : ""
-          }
-        >
-          <GiPlayButton />
-        </Button>
-      </div>
+
       <div className="topic-item-content">
         <h4 className="topic-title">{topic?.title}</h4>
         <div className="topic-meta d-flex align-items-center">
@@ -105,6 +71,49 @@ const TopicContent = ({ topic, onDeleting }) => {
           </Nav>
         </div>
         <Nav className="thread-actions d-flex align-items-center">
+          <div className="topic-vote d-flex align-items-center">
+            <Button
+              disabled={votingIsLoading}
+              onClick={() => {
+                if (!isAuth) navigate("/login");
+                if (isAuth) handleToggleUpvoteTopic(topic._id);
+              }}
+              className={
+                username && topic?.upvotes?.includes(username) ? "upvoted" : ""
+              }
+            >
+              <div className="d-flex icon-container">
+                <FaThumbsUp />
+              </div>
+
+            </Button>
+            <span
+              className={`votes ${username && topic?.upvotes?.includes(username) ? "upvoted" : ""
+                }`}
+            >
+              {topic?.upvotes?.length}
+            </span>
+            <Button
+              disabled={votingIsLoading}
+              onClick={() => {
+                if (!isAuth) navigate("/login");
+                if (isAuth) handleToggleDownvoteTopic(topic._id);
+              }}
+              className={
+                username && topic?.downvotes?.includes(username) ? "downvoted" : ""
+              }
+            >
+              <div className="d-flex icon-container">
+                <FaThumbsDown />
+              </div>
+            </Button>
+            <span
+              className={`${username && topic?.downvotes?.includes(username) ? "downvoted" : ""
+                }`}
+            >
+              {topic?.downvotes?.length}
+            </span>
+          </div>
           <Nav.Link
             style={{ pointerEvents: `none` }}
             className="d-flex align-items-center"

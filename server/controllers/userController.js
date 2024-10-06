@@ -7,6 +7,89 @@ const Topic = require("../models/topicModel");
 const Tag = require("../models/tagModel");
 
 module.exports = {
+  getUsers: async (req, res) => {
+    const { search, page = 1, limit = 10 } = req.query; // Get search query, page, and limit from the request
+    const searchQuery = search ? { username: new RegExp(search, 'i') } : {}; // Case-insensitive search by username
+
+    try {
+      const totalUsers = await User.countDocuments(searchQuery); // Get total count of users for pagination
+      const users = await User.find(searchQuery) // Fetch users based on search query
+        .skip((page - 1) * limit) // Skip for pagination
+        .limit(parseInt(limit)) // Limit the number of users returned
+        .select('-password') // Exclude the password field
+        .lean()
+        .exec();
+
+      return res.status(200).json({
+        users, // Return the users
+        totalUsers, // Total number of users for pagination
+        currentPage: parseInt(page), // Current page
+        totalPages: Math.ceil(totalUsers / limit), // Total pages for pagination
+      });
+    } catch (err) {
+      console.log(err.message);
+      return res.status(500).json({ message: 'An error occurred while fetching users.' });
+    }
+  },
+  updateUser: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true }).select('-password');
+      return res.status(200).json({
+        message: "User updated successfully",
+        updatedUser,
+      });
+    } catch (err) {
+      console.log(err.message);
+      return res.status(500).json({ message: 'An error occurred while updating user.' });
+    }
+  },
+  deleteUser: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const deletedUser = await User.findByIdAndDelete(userId);
+  
+      if (!deletedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      return res.status(200).json({ message: 'User deleted successfully', deletedUser });
+    } catch (error) {
+      return res.status(500).json({ error: 'Server error' });
+    }
+  },
+
+  // In your user controller
+  approveUser: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await User.findByIdAndUpdate(userId, { approved: true }, { new: true });
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      return res.status(200).json({ message: 'User approved successfully', user });
+    } catch (error) {
+      return res.status(500).json({ error: 'Server error' });
+    }
+  },
+
+  rejectUser: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await User.findByIdAndUpdate(userId, { approved: false }, { new: true });
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      return res.status(200).json({ message: 'User rejected successfully', user });
+    } catch (error) {
+      return res.status(500).json({ error: 'Server error' });
+    }
+  },
+
   getUserProfile: async (req, res) => {
     const { username } = req.params;
     try {

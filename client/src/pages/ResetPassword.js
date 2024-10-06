@@ -45,7 +45,7 @@ const ResetPassword = () => {
     <>
       {!token && <Navigate to="/forgot-password" />}
       {token && token?.length > 0 && (
-        <Row className="auth-form justify-content-center">
+        <Row className="auth-form justify-content-end">
           <div className="bg-wrapper">
             <div className="bg">
               <Image src="https://res.cloudinary.com/djuxwysbl/image/upload/v1674230232/bg_ywi34h.svg" />

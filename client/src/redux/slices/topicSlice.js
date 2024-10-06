@@ -4,12 +4,15 @@ import axios from "../../utils/axios";
 const initialState = {
   topics: [],
   topic: {},
+  totalTopics: 0,
+  getAllTopicsIsLoading: false,
+  searchQuery: "",
+  sortOption: "latest",
+  searchUser: '', // New field for filtering by email
+  message: null,
   topContributors: [],
   spaces: [],
   getSpacesLoading: false,
-  searchQuery: "",
-  sortOption: "latest",
-  getAllTopicsIsLoading: false,
   getTopicIsLoading: false,
   votingIsLoading: false,
   topContributorsIsLoading: false,
@@ -23,24 +26,24 @@ const initialState = {
   deleteTopicIsLoading: false,
   isSuccess: false,
   isError: false,
-  message: null,
 };
 
 export const getAllTopics = createAsyncThunk(
   "topic/getAllTopics",
-  async ({ sortOption, searchQuery }, { rejectWithValue }) => {
+  async ({ sortOption, searchQuery, page = 1, limit = 10, searchUser }, { rejectWithValue }) => {
     try {
       const { data } = await axios.get("/api/topics", {
-        params: { sort: sortOption, search: searchQuery },
+        params: { sort: sortOption, search: searchQuery, page, limit, searchUser }, // Pass page and limit to the backend
       });
       return data;
     } catch (err) {
       return rejectWithValue(
-    err.response?.data || { message: "An unexpected error occurred." }
-  );
+        err.response?.data || { message: "An unexpected error occurred." }
+      );
     }
   }
 );
+
 
 export const getTopic = createAsyncThunk(
   "topic/getTopic",
@@ -53,8 +56,8 @@ export const getTopic = createAsyncThunk(
       return data;
     } catch (err) {
       return rejectWithValue(
-    err.response?.data || { message: "An unexpected error occurred." }
-  );
+        err.response?.data || { message: "An unexpected error occurred." }
+      );
     }
   }
 );
@@ -75,8 +78,8 @@ export const addTopic = createAsyncThunk(
       return data;
     } catch (err) {
       return rejectWithValue(
-    err.response?.data || { message: "An unexpected error occurred." }
-  );
+        err.response?.data || { message: "An unexpected error occurred." }
+      );
     }
   }
 );
@@ -89,8 +92,8 @@ export const deleteTopic = createAsyncThunk(
       return data;
     } catch (err) {
       return rejectWithValue(
-    err.response?.data || { message: "An unexpected error occurred." }
-  );
+        err.response?.data || { message: "An unexpected error occurred." }
+      );
     }
   }
 );
@@ -103,8 +106,8 @@ export const toggleUpvoteTopic = createAsyncThunk(
       return data;
     } catch (err) {
       return rejectWithValue(
-    err.response?.data || { message: "An unexpected error occurred." }
-  );
+        err.response?.data || { message: "An unexpected error occurred." }
+      );
     }
   }
 );
@@ -117,8 +120,8 @@ export const toggleDownvoteTopic = createAsyncThunk(
       return data;
     } catch (err) {
       return rejectWithValue(
-    err.response?.data || { message: "An unexpected error occurred." }
-  );
+        err.response?.data || { message: "An unexpected error occurred." }
+      );
     }
   }
 );
@@ -131,8 +134,8 @@ export const getTopContributors = createAsyncThunk(
       return data;
     } catch (err) {
       return rejectWithValue(
-    err.response?.data || { message: "An unexpected error occurred." }
-  );
+        err.response?.data || { message: "An unexpected error occurred." }
+      );
     }
   }
 );
@@ -145,8 +148,8 @@ export const getSpaces = createAsyncThunk(
       return data;
     } catch (err) {
       return rejectWithValue(
-    err.response?.data || { message: "An unexpected error occurred." }
-  );
+        err.response?.data || { message: "An unexpected error occurred." }
+      );
     }
   }
 );
@@ -166,11 +169,17 @@ const topicSlice = createSlice({
     resetNewTopic: (state) => {
       state.addTopic = { ...initialState.addTopic };
     },
+    resetUserProfile: (state) => {
+      state.topic = {};
+    },
     setSearchQuery: (state, action) => {
       state.searchQuery = action.payload;
     },
     setSortOption: (state, action) => {
       state.sortOption = action.payload;
+    },
+    setSearchUser: (state, action) => {
+      state.searchUser = action.payload;  // New reducer for setting the email filter
     },
   },
   extraReducers: {
@@ -179,10 +188,12 @@ const topicSlice = createSlice({
     },
     [getAllTopics.fulfilled]: (state, action) => {
       state.getAllTopicsIsLoading = false;
-      state.topics = action.payload;
+      state.topics = action.payload.topics; // Extract topics from payload
+      state.totalTopics = action.payload.totalTopics; // Set total topics for pagination
     },
     [getAllTopics.rejected]: (state) => {
       state.getAllTopicsIsLoading = false;
+      state.message = "Failed to load topics";
     },
     [getTopic.pending]: (state) => {
       state.getTopicIsLoading = true;
@@ -346,7 +357,7 @@ const topicSlice = createSlice({
   },
 });
 
-export const { resetTopics, resetNewTopic, setSearchQuery, setSortOption } =
+export const { resetTopics, resetNewTopic, setSearchQuery, setSortOption, setSearchUser, resetUserProfile } =
   topicSlice.actions;
 
 export default topicSlice.reducer;
