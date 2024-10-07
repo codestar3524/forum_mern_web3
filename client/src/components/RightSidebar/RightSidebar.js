@@ -5,7 +5,7 @@ import TopHelpersCard from "./Cards/TopHelpersCard";
 const RightSidebar = () => {
   return (
     <Col lg={3} className="right-sidebar">
-      <TopContributorsCard />
+      {/* <TopContributorsCard /> */}
       <TopHelpersCard />
     </Col>
   );

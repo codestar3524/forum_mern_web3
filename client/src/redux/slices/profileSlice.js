@@ -13,9 +13,10 @@ const initialState = {
 
 export const getUserProfile = createAsyncThunk(
   "profile/getUserProfile",
-  async (username) => {
+  async (userid) => {
     try {
-      const { data } = await axios.get(`/api/user/${username}`, username);
+      
+      const { data } = await axios.get(`/api/user/${userid}`, userid);
       return data;
     } catch (err) {
       console.log(err.message);

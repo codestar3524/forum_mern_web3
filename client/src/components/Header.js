@@ -50,7 +50,7 @@ const Header = () => {
       <Navbar expand="lg">
         <Container>
           <Link className="logo" style={{display:"flex", alignItems:"center"}} to="/" onClick={() => dispatch(setSearchQuery(""))}>
-            <Image src={Logo} width={60} height={60} />
+            <Image src={Logo} width={50} height={50} />
             <Navbar.Brand className="logo-title">
               <h4>
                 中国学生区块链社区
@@ -110,7 +110,7 @@ const Header = () => {
                   <Dropdown.Menu>
                     <Dropdown.Item
                       as={Link}
-                      to={`/user/${user?.username}`}
+                      to={`/user/${user?._id}`}
                       className="d-flex align-items-center"
                     >
                       <BiUser />

@@ -12,9 +12,9 @@ import FormData from "form-data";
 import SkeletonEditProfile from "../components/Skeletons/SkeletonEditProfile";
 
 const EditProfile = () => {
-  const { username } = useParams();
+  const { _id } = useParams();
   // Safely parse the user from localStorage
-  const loggedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user"))?.username : null;
+  const loggedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user"))?._id : null;
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -23,17 +23,17 @@ const EditProfile = () => {
     (state) => state.auth.updateUserProfileState
   );
 
-  useEffect(() => {
-    if (username) {
-      document.title = `${username} - Edit Profile | ONetwork Forum`;
-    }
-  }, [username]);
+  // useEffect(() => {
+  //   if (username) {
+  //     document.title = `${username} - Edit Profile | ONetwork Forum`;
+  //   }
+  // }, [username]);
 
   useEffect(() => {
-    if (username) {
-      dispatch(getUserProfile(username));
+    if (_id) {
+      dispatch(getUserProfile(_id));
     }
-  }, [dispatch, username]);
+  }, [dispatch, _id]);
 
   useEffect(() => {
     dispatch(resetUpdateProfile());
@@ -71,7 +71,7 @@ const EditProfile = () => {
     formData.append("firstname", firstname);
     formData.append("lastname", lastname);
     formData.append("userName", userName);
-    formData.append("username", username);
+    formData.append("_id", _id);
     formData.append("email", email);
     formData.append("bio", bio);
     formData.append("password", password);
@@ -90,7 +90,7 @@ const EditProfile = () => {
   // eslint-disable-next-line
   return useMemo(() => {
     // Redirect if the logged user is not the same as the user being edited
-    if (loggedUser && loggedUser !== username)
+    if (loggedUser && loggedUser !== _id)
       return <Navigate to={`/user/${loggedUser}/edit`} />;
       
     if (profileIsLoading) return <SkeletonEditProfile />;

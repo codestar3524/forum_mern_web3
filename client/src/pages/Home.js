@@ -81,19 +81,13 @@ const Home = () => {
 
   return (
     <>
-      <main>
+      <main className="forum-container">
         <Container>
           <Topbar />
-
           <Row>
             <LeftSidebar handleClick={handleClickSidebar} />
-            <Col lg={6} className="main-content">
-              <Row>
-                <h6>-TOP CONTRIBUTORS-</h6>
-                <TopContributorSwiper />
-              </Row>
-
-
+            <Col lg={9} md={12} className="main-content">
+        
               <div className="topics">
                 {getAllTopicsIsLoading ? (
                   <>
@@ -114,7 +108,7 @@ const Home = () => {
               {/* Pagination Component */}
               {paginationComponent}
             </Col>
-            <RightSidebar />
+            {/* <RightSidebar /> */}
           </Row>
         </Container>
       </main>

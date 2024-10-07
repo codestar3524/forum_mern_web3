@@ -14,15 +14,15 @@ router.put('/:userId/approve', validateAccessToken, userController.approveUser);
 router.put('/:userId/reject', validateAccessToken, userController.rejectUser);
 router.delete('/:userId', validateAccessToken, userController.deleteUser);
 
-router.get("/:username", userController.getUserProfile);
-router.get("/:username/comments", userController.getUserComments);
-router.get("/:username/following", userController.getUserFollowing);
-router.get("/:username/followers", userController.getUserFollowers);
+router.get("/:_id", userController.getUserProfile);
+router.get("/:_id/comments", userController.getUserComments);
+router.get("/:_id/following", userController.getUserFollowing);
+router.get("/:_id/followers", userController.getUserFollowers);
 router.put(
-  "/:username/follow",
+  "/:_id/follow",
   validateAccessToken,
   userController.toggleUserFollow
 );
-router.put("/:username", validateAccessToken, userController.updateUserProfile);
+router.put("/:_id", validateAccessToken, userController.updateUserProfile);
 
 module.exports = router;

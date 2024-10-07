@@ -37,7 +37,7 @@ const Topic = () => {
 
   return useMemo(() => {
     return (
-      <main>
+      <main className="forum-container">
         <Container className="d-flex justify-content-between">
           <Col lg={8}>
             {message && (

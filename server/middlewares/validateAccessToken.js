@@ -28,8 +28,8 @@ const validateAccessToken = async (req, res, next) => {
           message: "Unauthorized!",
         });
       }
-      const { username, email } = decoded;
-      req.user = { username, email };
+      const { username, email,_id } = decoded;
+      req.user = { _id,username, email };
       next();
     }
   );

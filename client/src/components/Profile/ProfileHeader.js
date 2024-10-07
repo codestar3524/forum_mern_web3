@@ -17,21 +17,21 @@ import FollowButton from "./FollowButton";
 import SkeletonProfileHeader from "../Skeletons/SkeletonProfileHeader";
 
 const ProfileHeader = memo(() => {
-  const { username } = useParams();
+  const { _id } = useParams();
   const dispatch = useDispatch();
   const { userProfile, profileIsLoading } = useSelector(
     (state) => state.profile
   );
-  const loggedUser = JSON.parse(localStorage.getItem("user"))?.username;
+  const loggedUser = JSON.parse(localStorage.getItem("user"))?._id;
 
-  useEffect(() => {
-    if (username) document.title = `${username} Profile | ONetwork Forum`;
-  }, [username]);
-
+  // useEffect(() => {
+  //   if (username) document.title = `${username} Profile | ONetwork Forum`;
+  // }, [username]);
+  
   useMemo(() => {
-    dispatch(getUserProfile(username));
-  }, [dispatch, username]);
-
+    dispatch(getUserProfile(_id));
+  }, [dispatch, _id]);
+  
   // eslint-disable-next-line
   return useMemo(() => {
     if (profileIsLoading) {
@@ -47,16 +47,11 @@ const ProfileHeader = memo(() => {
           <div
             className="user-profile-meta d-flex align-items-center"
             style={{
-              backgroundImage: `linear-gradient(
-      to bottom,
-      rgba(123,98,129, 0.2),
-      rgba(31,68,151, 0.5)
-    ),
-    url(${userProfile?.cover?.url})`,
+              backgroundImage: `linear-gradient(rgb(152 0 69 / 53%), rgb(195 57 25 / 68%)), url(wallpaper.jpg), url(${userProfile?.cover?.url})`,
             }}
           >
             <Link
-              to={`/user/${userProfile?.username}`}
+              to={`/user/${userProfile?._id}`}
               className="user-avatar d-flex"
             >
               <Image src={userProfile?.avatar?.url} />
@@ -65,13 +60,13 @@ const ProfileHeader = memo(() => {
               <h4 className="user-name">{`${userProfile?.firstName} ${userProfile?.lastName}`}</h4>
               <div className="user-bio">{userProfile?.bio}</div>
               <div className="user-meta">
-                <span className="user-id">#{userProfile?.userID}</span>
-                <span className="username">@{userProfile?.username}</span>
+                <span className="user-id">#{userProfile?.username}</span>
+                <span className="username">@{userProfile?.email}</span>
                 <span className="user-website">sphinxo.dev</span>
               </div>
               <div className="user-actions">
-                {username === loggedUser && (
-                  <Link to={`/user/${userProfile?.username}/edit`}>
+                {_id === loggedUser && (
+                  <Link to={`/user/${userProfile?._id}/edit`}>
                     <Button className="edit d-inline-flex align-items-center">
                       <MdEdit />
                       Edit Profile
@@ -100,7 +95,7 @@ const ProfileHeader = memo(() => {
             <Nav as="ul" className="profile-menu">
               <Nav.Link
                 as={Link}
-                to={`/user/${userProfile?.username}/topics`}
+                to={`/user/${userProfile?._id}/topics`}
                 eventKey="topics"
                 className="d-flex align-items-center"
               >
@@ -111,7 +106,7 @@ const ProfileHeader = memo(() => {
               </Nav.Link>
               <Nav.Link
                 as={Link}
-                to={`/user/${userProfile?.username}/upvotes`}
+                to={`/user/${userProfile?._id}/upvotes`}
                 eventKey="upvotes"
                 className="d-flex align-items-center"
               >
@@ -122,7 +117,7 @@ const ProfileHeader = memo(() => {
               </Nav.Link>
               <Nav.Link
                 as={Link}
-                to={`/user/${userProfile?.username}/comments`}
+                to={`/user/${userProfile?._id}/comments`}
                 eventKey="comments"
                 className="d-flex align-items-center"
               >
@@ -133,7 +128,7 @@ const ProfileHeader = memo(() => {
               </Nav.Link>
               <Nav.Link
                 as={Link}
-                to={`/user/${userProfile?.username}/following`}
+                to={`/user/${userProfile?._id}/following`}
                 eventKey="following"
                 className="d-flex align-items-center"
               >
@@ -144,7 +139,7 @@ const ProfileHeader = memo(() => {
               </Nav.Link>
               <Nav.Link
                 as={Link}
-                to={`/user/${userProfile?.username}/followers`}
+                to={`/user/${userProfile?._id}/followers`}
                 eventKey="followers"
                 className="d-flex align-items-center"
               >

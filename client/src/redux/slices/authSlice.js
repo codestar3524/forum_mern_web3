@@ -118,9 +118,10 @@ export const refresh_token = createAsyncThunk(
 export const updateUserProfile = createAsyncThunk(
   "user/updateUserProfile",
   async (obj, { rejectWithValue }) => {
-    const { username } = obj;
+    const { _id } = obj;
+    
     try {
-      const { data } = await axios.put(`/api/user/${username}`, obj, {
+      const { data } = await axios.put(`/api/user/${_id}`, obj, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

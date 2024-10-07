@@ -44,6 +44,8 @@ const NewTopic = () => {
     // if (!selectedTags || selectedTags.length === 0) return;
     try {
       dispatch(addTopic({ title, content, selectedSpace, selectedTags }));
+      setTitle('');
+      setContent('');
     } catch (err) {
       console.log(err.message);
     }

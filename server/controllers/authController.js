@@ -86,7 +86,7 @@ module.exports = {
           message: "Invalid password!",
         });
       }
-      if (!userExisted.isVerified) {
+      if (!userExisted.approved) {
         return res.status(400).json({
           message: "Your account deactivate. Please reach out to administrator.",
         });

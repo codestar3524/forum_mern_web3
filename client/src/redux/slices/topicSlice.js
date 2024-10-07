@@ -221,7 +221,7 @@ const topicSlice = createSlice({
       } else {
         state.addTopic.message = "An error occurred while adding the topic.";
       }
-      state.addTopic.newTopicURL = `/topics/${action.payload.topic.TopicID}/${action.payload.topic.slug}`;
+      state.addTopic.newTopicURL = `/topics/${action.payload.topic.TopicID}/${action.payload.topic._id}`;
     },
     [addTopic.rejected]: (state, action) => {
       state.addTopic.isLoading = false;

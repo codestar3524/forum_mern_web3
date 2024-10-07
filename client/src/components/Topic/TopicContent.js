@@ -38,10 +38,10 @@ const TopicContent = ({ topic, onDeleting }) => {
           <div className="topic-writer d-flex align-items-center">
             <Link
               className="d-flex align-items-center justify-content-center"
-              to={`/user/${topic?.author?.username}`}
+              to={`/user/${topic?.owner?.username}`}
             >
-              <Image src={topic?.author?.avatar?.url} />
-              <h5 className="writer">{`${topic?.author?.firstName} ${topic?.author?.lastName}`}</h5>
+              <Image src={topic?.owner?.avatar?.url} />
+              <h5 className="writer">{`${topic?.owner?.firstName} ${topic?.owner?.lastName}`}</h5>
             </Link>
             <p className="topic-date">
               Posted{" "}
@@ -121,7 +121,7 @@ const TopicContent = ({ topic, onDeleting }) => {
             <FaEye />
             {topic?.viewsCount} views
           </Nav.Link>
-          {username && topic?.author?.username === username && (
+          {username && topic?.owner?.username === username && (
             <Nav.Link
               disabled={deleteTopicIsLoading}
               onClick={() => {

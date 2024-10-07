@@ -6,10 +6,11 @@ dotenv.config();
 const generateAccessToken = (user) => {
   email = user.email;
   username = user.username;
+  _id = user._id;
 
   try {
     const accessToken = jwt.sign(
-      { email, username },
+      { email, username,_id },
       process.env.ACCESS_TOKEN_SECRET_KEY,
       {
         expiresIn: process.env.ACCESS_TOKEN_EXPIRATION,
@@ -25,10 +26,11 @@ const generateAccessToken = (user) => {
 const generateRefreshToken = (user, expiration) => {
   email = user.email;
   username = user.username;
+  _id = user._id;
 
   try {
     const refreshToken = jwt.sign(
-      { email, username },
+      { email, username, _id },
       process.env.REFRESH_TOKEN_SECRET_KEY,
       {
         expiresIn: expiration,

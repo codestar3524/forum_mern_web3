@@ -91,18 +91,18 @@ module.exports = {
   },
 
   getUserProfile: async (req, res) => {
-    const { username } = req.params;
+    const { _id } = req.params;
     try {
-      const user = await User.findOne({ username }, { __v: 0, password: 0 });
+      const user = await User.findById(_id);
       return res.status(200).json(user);
     } catch (err) {
       console.log(err.message);
     }
   },
   getUserComments: async (req, res) => {
-    const { username } = req.params;
+    const { _id } = req.params;
     try {
-      const comments = await Comment.find({ owner: username })
+      const comments = await Comment.find({ owner: _id })
         .populate({ path: "author", select: { password: 0, __v: 0 } })
         .populate("parentTopic")
         .lean()
@@ -113,9 +113,9 @@ module.exports = {
     }
   },
   getUserFollowing: async (req, res) => {
-    const { username } = req.params;
+    const { _id } = req.params;
     try {
-      const user = await User.findOne({ username })
+      const user = await User.findById(_id)
         .populate({ path: "user_following", select: { password: 0, __v: 0 } })
         .lean()
         .exec();
@@ -125,9 +125,9 @@ module.exports = {
     }
   },
   getUserFollowers: async (req, res) => {
-    const { username } = req.params;
+    const { _id } = req.params;
     try {
-      const user = await User.findOne({ username })
+      const user = await User.findById(_id)
         .populate({ path: "user_followers", select: { password: 0, __v: 0 } })
         .lean()
         .exec();
@@ -172,82 +172,62 @@ module.exports = {
     }
   },
   updateUserProfile: async (req, res) => {
-    const { username } = req.params;
-    if (username !== req.user.username) {
-      return res.json({
-        message: "Unauthorized!",
-      });
+    const { _id } = req.params;
+
+    // Ensure that the user is updating their own profile
+    if (_id !== req.user._id) {
+      return res.status(401).json({ message: "Unauthorized!" });
     }
+  
     try {
-      var user = await User.findOne({ username });
+      // Find the user by their ID
+      const user = await User.findById(_id);
       if (!user) {
-        return res.status(404).json({
-          message: "User not found!",
-        });
+        return res.status(404).json({ message: "User not found!" });
       }
-      if (req.body.userName.trim() !== "") {
-        let existingUser = null;
-        existingUser = await User.findOne({ username: req.body.userName });
+  
+      // Handle username uniqueness if provided
+      if (req.body.userName && req.body.userName.trim() !== "" && req.body.userName !== user.username) {
+        const existingUser = await User.findOne({ username: req.body.userName });
         if (existingUser) {
-          delete user;
-          return res.status(422).json({
-            message: "A user with this username already exist!",
-          });
+          return res.status(422).json({ message: "Username already taken!" });
         }
+        user.username = req.body.userName.trim();
       }
-      if (req.body.email.trim() !== "") {
-        let existingUser = null;
-        existingUser = await User.findOne({ email: req.body.email });
+  
+      // Handle email uniqueness if provided
+      if (req.body.email && req.body.email.trim() !== "" && req.body.email !== user.email) {
+        const existingUser = await User.findOne({ email: req.body.email });
         if (existingUser) {
-          delete user;
-          return res.status(422).json({
-            message: "A user with this email already exist!",
-          });
+          return res.status(422).json({ message: "Email already in use!" });
         }
+        user.email = req.body.email.trim();
       }
-      user.firstName =
-        req.body.firstname.trim() === ""
-          ? user.firstName
-          : req.body.firstname.trim();
-
-      user.lastName =
-        req.body.lastname.trim() === ""
-          ? user.lastName
-          : req.body.lastname.trim();
-
-      user.email =
-        req.body.email.trim() === "" ? user.email : req.body.email.trim();
-
-      var oldUsername = user.username;
-
-      user.username =
-        req.body.userName.trim() === ""
-          ? user.username
-          : req.body.userName.trim();
-
-      user.bio = req.body.bio.trim() === "" ? user.bio : req.body.bio.trim();
-
+  
+      // Update basic profile information (only if provided)
+      if (req.body.firstname && req.body.firstname.trim() !== "") {
+        user.firstName = req.body.firstname.trim();
+      }
+      if (req.body.lastname && req.body.lastname.trim() !== "") {
+        user.lastName = req.body.lastname.trim();
+      }
+      if (req.body.bio && req.body.bio.trim() !== "") {
+        user.bio = req.body.bio.trim();
+      }
+  
+      // Update password if current and new password are provided
       if (
-        req.body.password.trim() !== "" &&
+        req.body.password &&
+        req.body.newPassword &&
+        req.body.confirmNewPassword &&
         req.body.newPassword.trim() !== "" &&
-        req.body.confirmNewPassword.trim() !== "" &&
-        req.body.newPassword.trim() === req.body.confirmNewPassword.trim()
+        req.body.newPassword === req.body.confirmNewPassword
       ) {
-        const passwordValid = await bcrypt.compare(
-          req.body.password.trim(),
-          user.password
-        );
-        if (!passwordValid) {
-          delete user;
-          return res.status(400).json({
-            message: "Current Password Invalid!",
-          });
+        const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+        if (!passwordMatch) {
+          return res.status(400).json({ message: "Incorrect current password!" });
         }
-        const hashedPassword = await bcrypt.hash(
-          req.body.newPassword.trim(),
-          10
-        );
-        user.password = hashedPassword;
+        user.password = await bcrypt.hash(req.body.newPassword.trim(), 10);
       }
 
       if (req?.files && Object.keys(req?.files)?.length > 0) {

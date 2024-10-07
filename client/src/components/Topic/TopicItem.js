@@ -32,10 +32,10 @@ const TopicItem = ({ topic }) => {
       <div className="topic-writer d-flex align-items-center">
         <Link
           className="d-flex align-items-center justify-content-center flex-column"
-          to={`/user/${topic?.author?.username}`}
+          to={`/user/${topic?.owner?.username}`}
         >
-          <Image src={topic?.author?.avatar?.url} />
-          <h6 className="writer">{`${topic?.author?.firstName} ${topic?.author?.lastName}`}</h6>
+          <Image src={topic?.owner?.avatar?.url} />
+          <h6 className="writer">{`${topic?.owner?.firstName} ${topic?.owner?.lastName}`}</h6>
         </Link>
 
       </div>
@@ -51,7 +51,7 @@ const TopicItem = ({ topic }) => {
               );
             })}
         </Nav>
-        <Link to={`/topics/${topic?.TopicID}/${topic?.slug}`}>
+        <Link to={`/topics/${topic?.TopicID}/${topic?._id}`}>
           <h4 className="topic-title">{topic?.title}</h4>
         </Link>
         <p className="topic-summary">{topic?.content}</p>

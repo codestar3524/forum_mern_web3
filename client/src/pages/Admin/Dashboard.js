@@ -43,14 +43,14 @@ const Dashboard = () => {
                     </Col>
                     <Col md={3} sm={6}>
                         <div className='d-flex align-items-center flex-column dashboard-item'>
-                            <h1></h1>
-                            <div>123</div>
+                            <h1>123</h1>
+                            <div>待处理的用户数量</div>
                         </div>
                     </Col>
                     <Col md={3} sm={6}>
                         <div className='d-flex align-items-center flex-column dashboard-item'>
-                            <h1></h1>
-                            <div>123</div>
+                            <h1>123</h1>
+                            <div>待处理的用户数量</div>
                         </div>
                     </Col>
                  </Row>

@@ -71,7 +71,7 @@ const App = () => {
             path="/topic/new"
             element={!isAuth ? <Navigate replace to="/login" /> : <NewTopic />}
           />
-          <Route path="/user/:username" element={<Profile />}>
+          <Route path="/user/:_id" element={<Profile />}>
             <Route path="topics" element={<TopicsTab />} />
             <Route path="upvotes" element={<UpvotedTab />} />
             <Route path="comments" element={<CommentsTab />} />
@@ -79,7 +79,7 @@ const App = () => {
             <Route path="followers" element={<FollowersTab />} />
           </Route>
           <Route
-            path="/user/:username/edit"
+            path="/user/:_id/edit"
             element={
               !isAuth ? <Navigate replace to="/login" /> : <EditProfile />
             }
